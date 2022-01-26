@@ -1,0 +1,68 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">DistInScale</string>
+    <string name="start">Старт</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="takePhoto">Сделать фото</string>
+    <string name="todo">TODO</string>
+    <string name="manual">Инструкция</string>
+    <string name="take_photo">1. Сделайте фото листа формата А4 с нанесёнными на него рисками</string>
+    <string name="choose_side">2. Выберите сторону, на которой нанесены риски</string>
+    <string name="choose_scale">3. Выберите масштаб карты</string>
+    <string name="textLength">Длина линии в масштабе</string>
+    <string name="_1_1000">1:1000</string>
+    <string name="second_text">составляет:</string>
+    <string name="doubleLength">00000.00 метров</string>
+    <string name="show">Показать этапы обработки</string>
+    <string name="text_main">
+        – это программа, которая поможет Вам измерить расстояние на карте и сразу
+        перевести его в необходимый масштаб.
+    </string>
+    <string name="text_1">1. Возьмите чистый белый лист формата А4.</string>
+    <string name="text_2">2. Положите его на карту и сделайте отметки первой и второй точки на одной из сторон листа.</string>
+    <string name="text_3">3. Риски не должны быть слишком тонкими. Их длина должна быть примерно в диапазоне 5–10 мм.</string>
+    <string name="text_4">4. Положите лист бумаги на ровную поверхность (чем поверхность темнее, тем выше будет качество обработки изображения).</string>
+    <string name="text_5">5. Нажмите на кнопку «Сделать фото»</string>
+    <string name="text_6">6. Расположите лист бумаги так, чтобы он занимал большую часть экрана, но не всю.</string>
+    <string name="text_7">7. Сделайте фото. Если его качество получилось не удовлетворительном, то попробуйте ещё раз. Для повышения качества обработки фотографируйте со вспышкой.</string>
+    <string name="text_8">8. Выберите сторону, на которой расположены риски.</string>
+    <string name="text_9">9. Выберите масштаб используемой карты.</string>
+    <string name="text_10">10. Нажмите «Подтвердить»</string>
+
+    <string name="text_11">Если после загрузки на экране не появился результат измерения, то произошла одна из двух проблем:</string>
+    <string name="text_12">1. Контур листа бумаги не найден!</string>
+    <string name="text_13">2. Отметки на листе не найдены!</string>
+    <string name="text_14">Для предотвращения первой проблемы необходимо:</string>
+    <string name="text_15">1 Положить лист на более тёмную поверхность.</string>
+    <string name="text_16">2 Расположить лист бумаги в условных границах так, как показано ниже</string>
+    <string name="text_17">3 Использовать вспышку</string>
+    <string name="text_18">4 Фокусироваться более чётко.</string>
+    <string name="text_19">Для предотвращения второй проблемы необходимо:</string>
+    <string name="text_20">1 Положить лист на более ровную поверхность.</string>
+    <string name="text_21">2 Наносить риски длиной 5–10мм.</string>
+    <string name="text_22">3 Наносить риски более мягким карандашом.</string>
+    <string name="version">Версия</string>
+    <string name="my_email">Aleksandr-Sergachev@yandex.by</string>
+    <string name="emailText">Email для связи</string>
+    <string name="developer">Разработчик</string>
+    <string name="developerName">Александр Сергачёв</string>
+    <string name="versionValue">v.1.0.1</string>
+
+
+    <string-array name="scale">
+        <item>1 : 1 000 000</item>
+        <item>1 : 100 000</item>
+        <item>1 : 50 000</item>
+        <item>1 : 25 000</item>
+        <item>1 : 10 000</item>
+        <item>1 : 5 000</item>
+        <item>1 : 2 000</item>
+    </string-array>
+
+    <string-array name="side">
+        <item>ЛЕВАЯ СТОРОНА ЛИСТА</item>
+        <item>ВЕРХНЯЯ СТОРОНА ЛИСТА</item>
+        <item>ПРАВАЯ СТОРОНА ЛИСТА</item>
+        <item>НИЖНЯЯ СТОРОНА ЛИСТА</item>
+    </string-array>
+
+</resources>

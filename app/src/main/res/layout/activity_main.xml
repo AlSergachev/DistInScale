@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/soft_grey"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/first_block"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_12sdp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            tools:ignore="NestedWeights" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/app_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="serif-monospace"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:text="@string/app_name"
+            android:textColor="@color/blue_grey"
+            android:textSize="@dimen/_27ssp"
+            android:layout_margin="@dimen/_20sdp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:textAllCaps="false"
+            android:background="@drawable/name_app_shape"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/second_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/_20sdp"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_30sdp"
+            android:background="@drawable/button_shape"
+            android:padding="@dimen/_4sdp"
+            android:text="@string/start"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="#FFFFFF"
+            android:shadowColor="@color/grey"
+            android:shadowRadius="3"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/manual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_4sdp"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:text="@string/manual"
+            android:textSize="@dimen/_12ssp"
+            android:background="@drawable/button_shape"
+            android:textColor="#FFFFFF"
+            android:shadowColor="@color/grey"
+            android:shadowRadius="3"
+
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1953125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/name_app_shape.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/name_app_shape_rev.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/bottom_shape.xml" value="0.152" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/button_shape.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/buttonshape.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/dialog_shape.xml" value="0.1875" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/ic_back.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/ic_info.xml" value="0.2703125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1953125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/image_background.xml" value="0.14322916666666666" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable/list_item.xml" value="0.140625" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout-v26/dialog.xml" value="0.17135416666666667" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/activity_manual.xml" value="0.264" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/activity_scale.xml" value="0.2" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/activity_work.xml" value="0.25416666666666665" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/dialog.xml" value="0.25416666666666665" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/layout/list_item.xml" value="0.16" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2375" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1953125" />
+        <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/xml/file_paths.xml" value="0.2151268115942029" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.2" />
+      </ProjectState>
+    </option>
+  </component>
+</project>
