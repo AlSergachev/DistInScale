@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.presentation.activity;
 
 import static org.opencv.core.Core.FILLED;
 import static org.opencv.core.Core.FONT_HERSHEY_SIMPLEX;
@@ -23,6 +23,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.distinscale.domain.Constants;
+import com.example.distinscale.domain.ImageAdapter;
+import com.example.distinscale.domain.models.PreprocessParameters;
+import com.example.distinscale.domain.models.SheetFormat;
+import com.example.distinscale.domain.models.Steps;
 import com.example.distinscale.databinding.ActivityWorkBinding;
 
 import org.opencv.android.OpenCVLoader;
