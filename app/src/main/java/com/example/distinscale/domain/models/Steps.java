@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.domain.models;
 
 public class Steps {
     public static final String STEP_1 = "Загрузка...";

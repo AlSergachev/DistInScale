@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/soft_grey"
     android:padding="@dimen/_5sdp"
-    tools:context=".WorkActivity">
+    tools:context=".presentation.activity.WorkActivity">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/resultImg"

@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.presentation.activity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.distinscale.R;
 import com.example.distinscale.databinding.ActivityManualBinding;
 
 public class ManualActivity extends AppCompatActivity {

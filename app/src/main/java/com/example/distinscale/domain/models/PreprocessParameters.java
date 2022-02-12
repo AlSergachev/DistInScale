@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.domain.models;
 
 public class PreprocessParameters {
     public final int GB_size;
@@ -10,7 +10,7 @@ public class PreprocessParameters {
     public final int d_i;
     public final int e_i;
 
-    PreprocessParameters(int GB_size, int GB_sX, int GB_sY, int C_t1, int C_t2, int k_size, int d_i, int e_i){
+    public PreprocessParameters(int GB_size, int GB_sX, int GB_sY, int C_t1, int C_t2, int k_size, int d_i, int e_i){
         this.GB_size = GB_size;
         this.GB_sX = GB_sX;
         this.GB_sY = GB_sY;

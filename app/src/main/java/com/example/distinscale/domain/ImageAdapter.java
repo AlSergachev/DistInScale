@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.domain;
 
 
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.distinscale.R;
+
 import org.opencv.android.Utils;
 import org.opencv.core.CvException;
 import org.opencv.core.Mat;
@@ -23,7 +25,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
     private final LayoutInflater inflater;
     private final List<Mat> matList;
 
-    ImageAdapter(Context context, List<Mat> matList) {
+    public ImageAdapter(Context context, List<Mat> matList) {
         this.matList = matList;
         this.inflater = LayoutInflater.from(context);
     }

@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.presentation.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.example.distinscale.domain.Constants;
 import com.example.distinscale.databinding.ActivityScaleBinding;
 
 

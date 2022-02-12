@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.presentation.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 

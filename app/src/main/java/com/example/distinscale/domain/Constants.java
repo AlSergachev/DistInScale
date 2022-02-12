@@ -1,4 +1,4 @@
-package com.example.distinscale;
+package com.example.distinscale.domain;
 
 public class Constants {
     public static final int MILLION = 0;

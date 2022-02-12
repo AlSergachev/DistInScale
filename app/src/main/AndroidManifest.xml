@@ -14,16 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DistInScale">
         <activity
-            android:name=".ManualActivity"
+            android:name=".presentation.activity.ManualActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="false" />
         <activity
-            android:name=".WorkActivity"
+            android:name=".presentation.activity.WorkActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="false" />
         <activity
-            android:name=".ScaleActivity"
+            android:name=".presentation.activity.ScaleActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
