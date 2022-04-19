@@ -19,11 +19,10 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
     }
 
-    private void setListeners(){
+    private void setListeners() {
         binding.start.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), ScaleActivity.class)));
         binding.manual.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), ManualActivity.class)));
     }
-
 }

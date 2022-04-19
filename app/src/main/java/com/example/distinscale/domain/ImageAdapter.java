@@ -20,7 +20,7 @@ import org.opencv.core.Mat;
 
 import java.util.List;
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<Mat> matList;
@@ -29,6 +29,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
         this.matList = matList;
         this.inflater = LayoutInflater.from(context);
     }
+
     @NonNull
     @Override
     public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,7 +51,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView resultImg;
-        ViewHolder(View view){
+
+        ViewHolder(View view) {
             super(view);
             resultImg = view.findViewById(R.id.resultImg);
         }

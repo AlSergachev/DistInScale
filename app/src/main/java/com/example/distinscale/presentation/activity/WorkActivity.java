@@ -79,7 +79,7 @@ public class WorkActivity extends AppCompatActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMax(12);              // Количество шагов
         progressDialog.setProgress(0);
-        progressDialog.setMessage(Steps.STEP_1);
+        progressDialog.setMessage(Steps.STEP_01);
         progressDialog.setCancelable(false);
         progressDialog.show();
 
@@ -92,19 +92,19 @@ public class WorkActivity extends AppCompatActivity {
             Mat imgMSF = imgOr.clone();
             matArrayList.add(0, imgOr);
             runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_1 + "\n" + Steps.STEP_2));
+                    Steps.STEP_01 + "\n" + Steps.STEP_02));
 
             Imgproc.pyrMeanShiftFiltering(imgM, imgMSF, 30, 80);
             matArrayList.add(0, imgMSF);
             runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_1 + "\n" + Steps.STEP_2 + "\n" + Steps.STEP_3));
+                    Steps.STEP_01 + "\n" + Steps.STEP_02 + "\n" + Steps.STEP_03));
 
             PreprocessParameters mainPreProc = new PreprocessParameters(
                     3, 2, 1, 310, 90, 17, 2, 1);
             Mat imgThree = preProcessing(imgMSF, mainPreProc);
             matArrayList.add(0, imgThree);
             runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_2 + "\n" + Steps.STEP_3 + "\n" + Steps.STEP_4));
+                    Steps.STEP_02 + "\n" + Steps.STEP_03 + "\n" + Steps.STEP_04));
 
             ArrayList<Point> corners = getCorners(imgThree, imgM, 10);
             if(corners.size() < 2) {
@@ -117,37 +117,37 @@ public class WorkActivity extends AppCompatActivity {
                 });
             }else {
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_3 + "\n" + Steps.STEP_4 + "\n" + Steps.STEP_5));
+                        Steps.STEP_03 + "\n" + Steps.STEP_04 + "\n" + Steps.STEP_05));
 
                 ArrayList<Point> newCorners = reorder(corners);
                 Mat imgPoints = drawPoints(newCorners, imgOr, new Scalar(0, 255, 255), 10);
                 matArrayList.add(0, imgPoints);
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_4 + "\n" + Steps.STEP_5 + "\n" + Steps.STEP_6));
+                        Steps.STEP_04 + "\n" + Steps.STEP_05 + "\n" + Steps.STEP_06));
 
                 SheetFormat A4 = setOrientation(newCorners);
                 Mat imgWarm =  getWarp(imgOr, newCorners, A4);
                 matArrayList.add(0, imgWarm);
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_5 + "\n" + Steps.STEP_6 + "\n" + Steps.STEP_7));
+                        Steps.STEP_05 + "\n" + Steps.STEP_06 + "\n" + Steps.STEP_07));
 
                 Mat imgCrop = getCropImg(imgWarm);
                 matArrayList.add(0, imgCrop);
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_6 + "\n" + Steps.STEP_7 + "\n" + Steps.STEP_8));
+                        Steps.STEP_06 + "\n" + Steps.STEP_07 + "\n" + Steps.STEP_08));
 
                 Mat imgCropMSF = imgCrop.clone();
                 Imgproc.pyrMeanShiftFiltering(imgCrop, imgCropMSF, 30, 30);
                 matArrayList.add(0, imgCropMSF);
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_7 + "\n" + Steps.STEP_8 + "\n" + Steps.STEP_9));
+                        Steps.STEP_07 + "\n" + Steps.STEP_08 + "\n" + Steps.STEP_09));
 
                 PreprocessParameters SecondPreProc = new PreprocessParameters(
                         3, 1, 0, 100, 100, 3, 3, 2);
                 Mat imgThreeSecond = preProcessing(imgCropMSF, SecondPreProc);
                 matArrayList.add(0, imgThreeSecond);
                 runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_8 + "\n" + Steps.STEP_9 + "\n" + Steps.STEP_10));
+                        Steps.STEP_08 + "\n" + Steps.STEP_09 + "\n" + Steps.STEP_10));
 
                 ArrayList<MatOfPoint> contoursOfMarks = findContoursOfMarks(imgThreeSecond, sideSheet);
                 if(contoursOfMarks.size() < 2) {
@@ -165,7 +165,7 @@ public class WorkActivity extends AppCompatActivity {
                     imgTwoPoints = drawPoints(twoPoints, imgTwoPoints, new Scalar(0, 255, 255), 1);
                     matArrayList.add(0, imgTwoPoints);
                     runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                            Steps.STEP_9 + "\n" + Steps.STEP_10 + "\n" + Steps.STEP_11));
+                            Steps.STEP_09 + "\n" + Steps.STEP_10 + "\n" + Steps.STEP_11));
 
                     Mat imgArrow = drawArrow(imgCrop, twoPoints, sideSheet);
                     matArrayList.add(0, imgArrow);

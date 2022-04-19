@@ -5,6 +5,9 @@
       <map>
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_manual.xml" value="0.1" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_scale.xml" value="0.25416666666666665" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_work.xml" value="0.25416666666666665" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/dialog.xml" value="0.264" />
         <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1953125" />
         <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/name_app_shape.xml" value="0.2703125" />
         <entry key="..\:/Java/JavaCV_test/DistInScale/app/src/main/res/drawable-v24/name_app_shape_rev.xml" value="0.2703125" />
