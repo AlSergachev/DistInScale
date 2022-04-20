@@ -29,9 +29,7 @@ import java.util.Date;
 public class ScaleActivity extends AppCompatActivity {
 
     private ActivityScaleBinding binding;
-    private static int scale;
     private static int side;
-    private static final int MAX_NUMBER_OF_SCALES = 7;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_PERM_CODE = 101;
     private String currentPhotoPath = "err";
@@ -49,11 +47,11 @@ public class ScaleActivity extends AppCompatActivity {
                         askCameraPermission());
 
         binding.confirm.setOnClickListener(v -> {
-            scale = binding.spinnerScale.getSelectedItemPosition();
-            int proven_scale = checkScale(scale);
+            int scalePosition = binding.spinnerScale.getSelectedItemPosition();
+            int scale = setScale(scalePosition);
             side = binding.spinnerSide.getSelectedItemPosition();
-            if (proven_scale < MAX_NUMBER_OF_SCALES && !currentPhotoPath.equals("err"))
-                startNewActivity(proven_scale);
+            if (scale > 0 && !currentPhotoPath.equals("err"))
+                startNewActivity(scale);
             else
                 showMessage("Сделайте фото");
         });
@@ -63,25 +61,35 @@ public class ScaleActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
 
-    private int checkScale(int scale){
+    private int setScale(int scale){
         switch (scale) {
             case Constants.MILLION:
-                return Constants.MILLION;
+                return 1000000;
             case Constants.ONE_HUNDRED_THOUSAND:
-                return Constants.ONE_HUNDRED_THOUSAND;
+                return 100000;
             case Constants.FIFTY_THOUSAND:
-                return Constants.FIFTY_THOUSAND;
+                return 50000;
             case Constants.TWENTY_FIVE_THOUSAND:
-                return Constants.TWENTY_FIVE_THOUSAND;
+                return 25000;
             case Constants.TEN_THOUSAND:
-                return Constants.TEN_THOUSAND;
+                return 10000;
             case Constants.FIVE_THOUSAND:
-                return Constants.FIVE_THOUSAND;
+                return 5000;
             case Constants.TWO_THOUSAND:
-                return Constants.TWO_THOUSAND;
+                return 2000;
+            case Constants.OWN_THOUSAND:
+                return 1000;
+            case Constants.FIVE_HUNDRED:
+                return 500;
+            case Constants.TWO_HUNDRED:
+                return 200;
+            case Constants.HUNDRED:
+                return 100;
+            case Constants.FIFTY :
+                return 50;
             default:
                 showMessage("Указан неверный масштаб");
-                return 10;
+                return -1;
         }
     }
 

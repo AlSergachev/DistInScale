@@ -8,6 +8,11 @@ public class Constants {
     public static final int TEN_THOUSAND = 4;
     public static final int FIVE_THOUSAND = 5;
     public static final int TWO_THOUSAND = 6;
+    public static final int OWN_THOUSAND = 7;
+    public static final int FIVE_HUNDRED = 8;
+    public static final int TWO_HUNDRED = 9;
+    public static final int HUNDRED = 10;
+    public static final int FIFTY = 11;
 
     public static final int LEFT_SIDE_SHEET = 0;
     public static final int TOP_SIDE_SHEET = 1;
