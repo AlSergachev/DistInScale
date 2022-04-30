@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.Printer;
 import android.view.View;
 import android.widget.Toast;
 
@@ -60,11 +59,15 @@ public class WorkActivity extends AppCompatActivity {
             runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
                     Steps.STEP_01 + "\n" + Steps.STEP_02 + "\n" + Steps.STEP_03));
 
-            proc.preProcessingFirstStep();
+            int threshold2 = 256;
+            do {
+                proc.preProcessingFirstStep(threshold2);
+                proc.getCornersStep();
+                threshold2 /= 2;
+            } while (proc.corners.size() < 3 && threshold2 > 3);
             runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
                     Steps.STEP_02 + "\n" + Steps.STEP_03 + "\n" + Steps.STEP_04));
 
-            proc.getCornersStep();
             if (proc.corners.size() < 2) {
                 handler.post(() -> {
                     progressDialog.dismiss();

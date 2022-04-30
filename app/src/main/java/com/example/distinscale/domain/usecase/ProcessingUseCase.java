@@ -70,19 +70,23 @@ public class ProcessingUseCase {
     }
 
     public void pyrMeanShiftFilteringFirstStep() {
-        Imgproc.pyrMeanShiftFiltering(imgM, imgMSF, 30, 80);
+        Imgproc.pyrMeanShiftFiltering(imgM, imgMSF, 15, 50);
         matArrayList.add(0, imgMSF);
     }
 
-    public void preProcessingFirstStep() {
+    public void preProcessingFirstStep(int C_t2) {
         PreprocessParameters mainPreProc = new PreprocessParameters(
-                3, 2, 1, 310, 90, 17, 2, 1);
+                3, 2, 1, 10, C_t2, 17, 2, 1);
         imgThree = preProcessing(imgMSF, mainPreProc);
         matArrayList.add(0, imgThree);
     }
 
     public void getCornersStep() {
         corners = getCorners(imgThree, imgM, 10);
+    }
+
+    public void saveImgWithCornersStep() {
+        matArrayList.add(0, imgThree);
     }
 
     public void drawPointsStep() {
@@ -104,13 +108,13 @@ public class ProcessingUseCase {
 
     public void pyrMeanShiftFilteringSecondStep() {
         imgCropMSF = imgCrop.clone();
-        Imgproc.pyrMeanShiftFiltering(imgCrop, imgCropMSF, 30, 30);
+        Imgproc.pyrMeanShiftFiltering(imgCrop, imgCropMSF, 5, 5);
         matArrayList.add(0, imgCropMSF);
     }
 
     public void preProcessingSecondStep() {
         PreprocessParameters SecondPreProc = new PreprocessParameters(
-                3, 1, 0, 100, 100, 3, 3, 2);
+                3, 1, 0, 10, 100, 3, 3, 2);
         imgThreeSecond = preProcessing(imgCropMSF, SecondPreProc);
         matArrayList.add(0, imgThreeSecond);
     }
@@ -129,8 +133,8 @@ public class ProcessingUseCase {
     }
 
     public void drawArrowStep() {
-        Mat imgArrow = drawArrow(imgCrop, twoPoints, sideSheet);
-        matArrayList.add(0, imgArrow);
+        Mat img = drawArrow(imgCrop, twoPoints, sideSheet);
+        matArrayList.add(0, img);
     }
 
     public void getLengthLineStep() {
@@ -139,25 +143,23 @@ public class ProcessingUseCase {
 
 
     // Выполняет бинаризацию изображения
-    private Mat preProcessing(Mat img, PreprocessParameters pp) {
-        Mat imgGray = new Mat();
-        Mat imgCanny = new Mat();
-        Mat imgBlur = new Mat();
-        Mat imgDil = new Mat();
-        Mat imgErode = new Mat();
+    private Mat preProcessing(Mat srcImg, PreprocessParameters pp) {
+        Mat img = srcImg.clone();
 
-        // Преобразует изображение из одного цветового пространства в другое
-        Imgproc.cvtColor(img, imgGray, COLOR_BGR2GRAY);
         // Размывает изображение с помощью гауссовского фильтра
-        Imgproc.GaussianBlur(imgGray, imgBlur, new Size(pp.GB_size, pp.GB_size), pp.GB_sX, pp.GB_sY);
+        Imgproc.GaussianBlur(img, img, new Size(pp.GB_size, pp.GB_size), pp.GB_sX, pp.GB_sY);
+        // Преобразует изображение из одного цветового пространства в другое
+        Imgproc.cvtColor(img, img, COLOR_BGR2GRAY);
+        // Размывает изображение с помощью гауссовского фильтра
+        Imgproc.GaussianBlur(img, img, new Size(pp.GB_size, pp.GB_size), pp.GB_sX, pp.GB_sY);
         // Находит ребра в изображении с помощью алгоритма Кэнни
-        Imgproc.Canny(imgBlur, imgCanny, pp.C_t1, pp.C_t2);
+        Imgproc.Canny(img, img, pp.C_t1, pp.C_t2, 3);
         // Возвращает структурирующий элемент заданного размера и формы для морфологических операций
         Mat kernel = Imgproc.getStructuringElement(MORPH_RECT, new Size(pp.k_size, pp.k_size));
-        Imgproc.dilate(imgCanny, imgDil, kernel, new Point(-1, -1), pp.d_i);
-        Imgproc.erode(imgDil, imgErode, kernel, new Point(-1, -1), pp.e_i);
+        Imgproc.dilate(img, img, kernel, new Point(-1, -1), pp.d_i);
+        Imgproc.erode(img, img, kernel, new Point(-1, -1), pp.e_i);
 
-        return imgErode;
+        return img;
     }
 
     // Определяет точки углов листа
@@ -169,6 +171,7 @@ public class ProcessingUseCase {
         ArrayList<Point> corners = new ArrayList<>();
         MatOfPoint2f largestCurve = new MatOfPoint2f();
         ArrayList<MatOfPoint> contours = new ArrayList<>();
+        double minArcLength = imgThree.height() + imgThree.width();
 
         // Находит контуры в двоичном изображении
         Imgproc.findContours(image, contours, new Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
@@ -188,18 +191,19 @@ public class ProcessingUseCase {
 
                 // Вычисляет длину кривой или периметр замкнутого контура
                 double peri = Imgproc.arcLength(thisContour, true);
-
-                // Аппроксимирует полигональную кривую с заданной точностью
-                MatOfPoint2f approxCurve = new MatOfPoint2f();
-                //      параметр "epsilon" представляет максимальное расстояние между приближением
-                //      контура формы входного многоугольника и исходным входным многоугольником
-                Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
-                boolean isConvex = isContourConvex(new MatOfPoint(approxCurve.toArray()));
-                if (approxCurve.total() == 4 && isConvex) {
-                    maxArea = area;
-                    largestCurve = approxCurve;
-                    Imgproc.drawContours(imgOr, Collections.singletonList(contour),
-                            -1, new Scalar(255, 0, 255), scale);
+                if (peri >= minArcLength) {
+                    // Аппроксимирует полигональную кривую с заданной точностью
+                    MatOfPoint2f approxCurve = new MatOfPoint2f();
+                    //      параметр "epsilon" представляет максимальное расстояние между приближением
+                    //      контура формы входного многоугольника и исходным входным многоугольником
+                    Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
+                    boolean isConvex = isContourConvex(new MatOfPoint(approxCurve.toArray()));
+                    if (approxCurve.total() == 4 && isConvex) {
+                        maxArea = area;
+                        largestCurve = approxCurve;
+                        Imgproc.drawContours(imgOr, Collections.singletonList(contour),
+                                -1, new Scalar(255, 0, 255), scale);
+                    }
                 }
             }
         }
@@ -313,24 +317,32 @@ public class ProcessingUseCase {
 
     // Определяет среднюю точку контура
     private Point getMiddlePoint(MatOfPoint2f contour) {
-        Point p1 = contour.toArray()[0];
-        Point p2 = contour.toArray()[1];
-        Point p3 = contour.toArray()[2];
-        Point p4 = contour.toArray()[3];
+        Point[] points = contour.toArray();
+        double sumX = 0, sumY = 0;
+        for (Point p : points) {
+            sumX += p.x;
+        }
+        for (Point p : points) {
+            sumY += p.y;
+        }
 
-        double mX = (p1.x + p2.x + p3.x + p4.x) / 4;
-        double mY = (p1.y + p2.y + p3.y + p4.y) / 4;
+        double mX = sumX / points.length;
+        double mY = sumY / points.length;
         return new Point(mX, mY);
     }
 
     private Point getMiddlePoint(MatOfPoint contour) {
-        Point p1 = contour.toArray()[0];
-        Point p2 = contour.toArray()[1];
-        Point p3 = contour.toArray()[2];
-        Point p4 = contour.toArray()[3];
+        Point[] points = contour.toArray();
+        double sumX = 0, sumY = 0;
+        for (Point p : points) {
+            sumX += p.x;
+        }
+        for (Point p : points) {
+            sumY += p.y;
+        }
 
-        double mX = (p1.x + p2.x + p3.x + p4.x) / 4;
-        double mY = (p1.y + p2.y + p3.y + p4.y) / 4;
+        double mX = sumX / points.length;
+        double mY = sumY / points.length;
         return new Point(mX, mY);
     }
 
@@ -365,29 +377,27 @@ public class ProcessingUseCase {
             Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
 
             MatOfPoint c = new MatOfPoint(approxCurve.toArray());
-            if (approxCurve.total() == 4) {
-                switch (sideSheet) {
-                    case Constants.LEFT_SIDE_SHEET:
-                        if (getMiddlePoint(approxCurve).x < SIZE_BORDER) {
-                            resultContours.add(c);
-                        }
-                        break;
-                    case Constants.TOP_SIDE_SHEET:
-                        if (getMiddlePoint(approxCurve).y < SIZE_BORDER) {
-                            resultContours.add(c);
-                        }
-                        break;
-                    case Constants.RIGHT_SIDE_SHEET:
-                        if (getMiddlePoint(approxCurve).x > image.width() - SIZE_BORDER) {
-                            resultContours.add(c);
-                        }
-                        break;
-                    case Constants.BOTTOM_SIDE_SHEET:
-                        if (getMiddlePoint(approxCurve).y > image.height() - SIZE_BORDER) {
-                            resultContours.add(c);
-                        }
-                        break;
-                }
+            switch (sideSheet) {
+                case Constants.LEFT_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).x < SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.TOP_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).y < SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.RIGHT_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).x > image.width() - SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.BOTTOM_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).y > image.height() - SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
             }
         }
         if (resultContours.isEmpty()) {
@@ -513,6 +523,5 @@ public class ProcessingUseCase {
         }
         return (realLengthSheet * length * mapScale) / (actualLengthSheet * 1000);
     }
-
 
 }
