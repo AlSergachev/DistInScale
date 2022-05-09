@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListeners() {
         binding.start.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), ScaleActivity.class)));
+                startActivity(new Intent(getApplicationContext(), SourceDataActivity.class)));
         binding.manual.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), ManualActivity.class)));
     }

@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.example.distinscale.domain.ImageAdapter;
 import com.example.distinscale.domain.models.Steps;
 import com.example.distinscale.databinding.ActivityWorkBinding;
-import com.example.distinscale.domain.usecase.ProcessingUseCase;
+import com.example.distinscale.domain.usecase.ProcessingImage;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -25,11 +25,11 @@ import org.opencv.core.Mat;
 @SuppressWarnings("deprecation")
 public class WorkActivity extends AppCompatActivity {
 
+    ActivityWorkBinding binding;
     private static int isVisibleRecyclerView;
     private String currentPhotoPath;
     private int mapScale;
     private int sideSheet;
-    ActivityWorkBinding binding;
     private ProgressDialog progressDialog;
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -48,7 +48,7 @@ public class WorkActivity extends AppCompatActivity {
         Handler handler = new Handler();
         new Thread(() -> {
 
-            ProcessingUseCase proc = new ProcessingUseCase(mapScale, sideSheet);
+            ProcessingImage proc = new ProcessingImage(mapScale, sideSheet);
             final int[] pr = {1};
 
             proc.setImageStep(currentPhotoPath);
@@ -137,6 +137,8 @@ public class WorkActivity extends AppCompatActivity {
         }).start();
 
     }
+
+    // Создаёт ProgressDialog
     private void createProgressDialog(){
         progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -147,7 +149,7 @@ public class WorkActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
-
+    // ОБрабатывает нажатия на кнопки
     private void setListener() {
         binding.btmShowSteps.setOnClickListener(v -> {
             if (isVisibleRecyclerView == View.INVISIBLE) {
@@ -181,7 +183,7 @@ public class WorkActivity extends AppCompatActivity {
         }
     }
 
-    // Загружает данные из ScaleActivity
+    // Загружает данные из SourceDataActivity
     private void getData() {
         Bundle arguments = getIntent().getExtras();
         currentPhotoPath = arguments.getString("CURRENT_PHOTO_PATH");

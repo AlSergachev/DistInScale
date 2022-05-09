@@ -31,7 +31,7 @@ import org.opencv.utils.Converters;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ProcessingUseCase {
+public class ProcessingImage {
 
     public ArrayList<Mat> matArrayList = new ArrayList<>();
     public ArrayList<Point> corners;
@@ -57,7 +57,7 @@ public class ProcessingUseCase {
     private final SheetFormat A4_V = new SheetFormat(210, 297);
     private final SheetFormat A4_H = new SheetFormat(297, 210);
 
-    public ProcessingUseCase(int mapScale, int sideSheet) {
+    public ProcessingImage(int mapScale, int sideSheet) {
         this.mapScale = mapScale;
         this.sideSheet = sideSheet;
     }

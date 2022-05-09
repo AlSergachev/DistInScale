@@ -3,9 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Java/DistInScale/app/src/main/res/drawable-v24/name_app_shape.xml" value="0.1695" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/drawable-v24/name_app_shape_rev.xml" value="0.1695" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1695" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/drawable/image_background.xml" value="0.1695" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
-        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_manual.xml" value="0.1" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_manual.xml" value="0.264" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_scale.xml" value="0.25416666666666665" />
+        <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_source_data.xml" value="0.25416666666666665" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/activity_work.xml" value="0.25416666666666665" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/dialog.xml" value="0.264" />
         <entry key="..\:/Java/DistInScale/app/src/main/res/layout/list_item.xml" value="0.25416666666666665" />

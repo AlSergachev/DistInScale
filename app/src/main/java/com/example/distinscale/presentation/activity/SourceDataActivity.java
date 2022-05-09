@@ -16,8 +16,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.example.distinscale.databinding.ActivitySourceDataBinding;
 import com.example.distinscale.domain.Constants;
-import com.example.distinscale.databinding.ActivityScaleBinding;
 
 
 import java.io.File;
@@ -26,9 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class ScaleActivity extends AppCompatActivity {
+public class SourceDataActivity extends AppCompatActivity {
 
-    private ActivityScaleBinding binding;
+    private ActivitySourceDataBinding binding;
     private static int side;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_PERM_CODE = 101;
@@ -37,7 +37,7 @@ public class ScaleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityScaleBinding.inflate(getLayoutInflater());
+        binding = ActivitySourceDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
     }
@@ -133,6 +133,7 @@ public class ScaleActivity extends AppCompatActivity {
         return image;
     }
 
+    @SuppressWarnings("deprecation")
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {

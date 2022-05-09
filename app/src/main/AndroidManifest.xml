@@ -27,7 +27,7 @@
             android:exported="false"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".presentation.activity.ScaleActivity"
+            android:name=".presentation.activity.SourceDataActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
             android:exported="false"
