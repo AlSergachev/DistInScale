@@ -17,7 +17,7 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.example.distinscale.databinding.ActivitySourceDataBinding;
-import com.example.distinscale.domain.Constants;
+import com.example.distinscale.domain.utilities.Constants;
 
 
 import java.io.File;

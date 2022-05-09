@@ -1,4 +1,4 @@
-package com.example.distinscale.domain.usecase;
+package com.example.distinscale.domain.logic;
 
 import static org.opencv.core.Core.FILLED;
 import static org.opencv.core.Core.FONT_HERSHEY_SIMPLEX;
@@ -12,7 +12,7 @@ import static org.opencv.imgproc.Imgproc.isContourConvex;
 import static org.opencv.imgproc.Imgproc.line;
 import static org.opencv.imgproc.Imgproc.warpPerspective;
 
-import com.example.distinscale.domain.Constants;
+import com.example.distinscale.domain.utilities.Constants;
 import com.example.distinscale.domain.models.PreprocessParameters;
 import com.example.distinscale.domain.models.SheetFormat;
 

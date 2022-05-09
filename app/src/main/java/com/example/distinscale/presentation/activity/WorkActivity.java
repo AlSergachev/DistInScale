@@ -11,10 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.distinscale.domain.ImageAdapter;
+import com.example.distinscale.domain.utilities.ImageAdapter;
 import com.example.distinscale.domain.models.Steps;
 import com.example.distinscale.databinding.ActivityWorkBinding;
-import com.example.distinscale.domain.usecase.ProcessingImage;
+import com.example.distinscale.domain.logic.ProcessingImage;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;

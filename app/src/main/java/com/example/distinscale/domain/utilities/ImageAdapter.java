@@ -1,4 +1,4 @@
-package com.example.distinscale.domain;
+package com.example.distinscale.domain.utilities;
 
 
 import android.content.Context;
