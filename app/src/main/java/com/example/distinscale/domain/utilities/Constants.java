@@ -1,5 +1,8 @@
 package com.example.distinscale.domain.utilities;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Constants {
     public static final int MILLION = 0;
     public static final int ONE_HUNDRED_THOUSAND = 1;
@@ -19,11 +22,19 @@ public class Constants {
     public static final int RIGHT_SIDE_SHEET = 2;
     public static final int BOTTOM_SIDE_SHEET = 3;
 
-    public static final String S_MILLION = "1 : 1 000 000";
-    public static final String S_ONE_HUNDRED_THOUSAND = "1 : 100 000";
-    public static final String S_FIFTY_THOUSAND = "1 : 50 000";
-    public static final String S_TWENTY_FIVE_THOUSAND = "1 : 25 000";
-    public static final String S_TEN_THOUSAND = "1 : 10 000";
-    public static final String S_FIVE_THOUSAND = "1 : 5 000";
-    public static final String S_TWO_THOUSAND = "1 : 2 000";
+    public static final List<String> listOfSteps = Arrays.asList(
+            "Загрузка...",
+            "Изображение загружено...",
+            "Фильтрация Pyrmeanshift выполнена...",
+            "Бинаризация изображения выполнена...",
+            "Углы листа получены...",
+            "Углы листа отсортированы...",
+            "Трансформирование выполненно...",
+            "Изображение обрезано...",
+            "Фильтрация Pyrmeanshift выполнена...",
+            "Бинаризация изображения выполнена...",
+            "Точки найденны...",
+            "Стрелка нарисована...",
+            "Обработка завершена!"
+    );
 }

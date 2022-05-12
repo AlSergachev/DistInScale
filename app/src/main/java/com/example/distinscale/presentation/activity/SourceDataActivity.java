@@ -42,6 +42,27 @@ public class SourceDataActivity extends AppCompatActivity {
         setListeners();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERM_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent();
+            } else {
+                showMessage("Для использования приложения необходимо дать разрешение камере");
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            File f = new File(currentPhotoPath);
+            binding.thumbnail.setImageURI(Uri.fromFile(f));
+        }
+    }
+
     private void setListeners(){
         binding.takePhoto.setOnClickListener(v ->
                         askCameraPermission());
@@ -100,27 +121,6 @@ public class SourceDataActivity extends AppCompatActivity {
                     CAMERA_PERM_CODE);
         } else {
             dispatchTakePictureIntent();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERM_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                showMessage("Для использования приложения необходимо дать разрешение камере");
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            File f = new File(currentPhotoPath);
-            binding.thumbnail.setImageURI(Uri.fromFile(f));
         }
     }
 

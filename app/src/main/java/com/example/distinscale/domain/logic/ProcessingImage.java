@@ -31,32 +31,24 @@ import org.opencv.utils.Converters;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class ProcessingImage {
 
     public ArrayList<Mat> matArrayList = new ArrayList<>();
-    public ArrayList<Point> corners;
     public ArrayList<MatOfPoint> contoursOfMarks;
+    public ArrayList<Point> corners;
     public double length;
 
-    private Mat imgOr;
-    private Mat imgM;
-    private Mat imgMSF;
-    private Mat imgThree;
-    private Mat imgWarm;
-    private Mat imgCrop;
-    private Mat imgCropMSF;
-    private Mat imgThreeSecond;
-    private ArrayList<Point> twoPoints;
     private SheetFormat A4;
-    private ArrayList<Point> newCorners;
-    private final int mapScale;
-    private final int sideSheet;
-    private final int CROP_VALUE = 10;
-    private final int FACTOR_VALUE = 5;
+    private Mat imgOr, imgCrop;
+    private ArrayList<Point> twoPoints, newCorners;
+    private final int mapScale, sideSheet;
+    private final int CROP_VALUE = 10;  //Размер обрезания краёв листа
+    private final int FACTOR_VALUE = 5; //Коэфициент преобразовании изображения в ортогональное
     private final int SIZE_BORDER = 30; //Размер отступа от края листа бумаги для поиска рисок
-    private final SheetFormat A4_V = new SheetFormat(210, 297);
-    private final SheetFormat A4_H = new SheetFormat(297, 210);
 
+
+    /** 1)	Загрузка исходных данных */
     public ProcessingImage(int mapScale, int sideSheet) {
         this.mapScale = mapScale;
         this.sideSheet = sideSheet;
@@ -64,63 +56,65 @@ public class ProcessingImage {
 
     public void setImageStep(String filename) {
         imgOr = Imgcodecs.imread(filename);
-        imgM = imgOr.clone();
-        imgMSF = imgOr.clone();
         matArrayList.add(0, imgOr);
     }
 
+    /** 2)	Предобработка исходного изображения */
     public void pyrMeanShiftFilteringFirstStep() {
-        Imgproc.pyrMeanShiftFiltering(imgM, imgMSF, 15, 50);
+        Mat imgMSF = imgOr.clone();
+        Imgproc.pyrMeanShiftFiltering(imgMSF, imgMSF, 15, 50);
         matArrayList.add(0, imgMSF);
     }
 
     public void preProcessingFirstStep(int C_t2) {
         PreprocessParameters mainPreProc = new PreprocessParameters(
                 3, 2, 1, 10, C_t2, 17, 2, 1);
-        imgThree = preProcessing(imgMSF, mainPreProc);
+        Mat imgThree = preProcessing(matArrayList.get(0), mainPreProc);
         matArrayList.add(0, imgThree);
     }
 
+    /** 3)	Получение изображения листа */
     public void getCornersStep() {
-        corners = getCorners(imgThree, imgM, 10);
-    }
-
-    public void saveImgWithCornersStep() {
-        matArrayList.add(0, imgThree);
-    }
-
-    public void drawPointsStep() {
-        newCorners = reorder(corners);
-        Mat imgPoints = drawPoints(newCorners, imgOr, new Scalar(0, 255, 255), 10);
+        Mat imgPoints = imgOr.clone();
+        corners = getCorners(matArrayList.get(0), imgPoints, 5);
+        imgPoints = drawPoints(corners, imgPoints, new Scalar(0, 255, 255), 10);
         matArrayList.add(0, imgPoints);
     }
 
-    public void warmImageStep() {
+    public void reorderStep() {
+        newCorners = reorder(corners);
+        Mat imgReorderPoints = drawPoints(newCorners, imgOr, new Scalar(0, 255, 255), 10);
+        matArrayList.add(0, imgReorderPoints);
+    }
+
+    public void warpImageStep() {
         A4 = setOrientation(newCorners);
-        imgWarm = getWarp(imgOr, newCorners, A4);
+        Mat imgWarm = getWarp(imgOr, newCorners, A4);
         matArrayList.add(0, imgWarm);
     }
 
     public void cropStep() {
-        imgCrop = getCropImg(imgWarm);
+        imgCrop = getCropImg(matArrayList.get(0));
         matArrayList.add(0, imgCrop);
     }
 
+    /** 4)	Предобработка изображения листа */
     public void pyrMeanShiftFilteringSecondStep() {
-        imgCropMSF = imgCrop.clone();
-        Imgproc.pyrMeanShiftFiltering(imgCrop, imgCropMSF, 5, 5);
+        Mat imgCropMSF = imgCrop.clone();
+        Imgproc.pyrMeanShiftFiltering(imgCropMSF, imgCropMSF, 5, 5);
         matArrayList.add(0, imgCropMSF);
     }
 
     public void preProcessingSecondStep() {
-        PreprocessParameters SecondPreProc = new PreprocessParameters(
+        PreprocessParameters secondPreProc = new PreprocessParameters(
                 3, 1, 0, 10, 100, 3, 3, 2);
-        imgThreeSecond = preProcessing(imgCropMSF, SecondPreProc);
+        Mat imgThreeSecond = preProcessing(matArrayList.get(0), secondPreProc);
         matArrayList.add(0, imgThreeSecond);
     }
 
+    /** 5)	Получение отметок с листа */
     public void findContoursOfMarksStep() {
-        contoursOfMarks = findContoursOfMarks(imgThreeSecond, sideSheet);
+        contoursOfMarks = findContoursOfMarks(matArrayList.get(0), sideSheet);
     }
 
     public void selectPointStep() {
@@ -132,16 +126,18 @@ public class ProcessingImage {
         matArrayList.add(0, imgTwoPoints);
     }
 
-    public void drawArrowStep() {
-        Mat img = drawArrow(imgCrop, twoPoints, sideSheet);
-        matArrayList.add(0, img);
-    }
-
+    /** 6)	Расчет длины отрезка */
     public void getLengthLineStep() {
         length = getLengthLine(imgCrop, twoPoints, sideSheet, A4);
     }
 
+    public void drawArrowStep() {
+        Mat imgArrow = drawArrow(imgCrop, twoPoints, sideSheet);
+        matArrayList.add(0, imgArrow);
+    }
 
+
+    /** Вспомогательные функции */
     // Выполняет бинаризацию изображения
     private Mat preProcessing(Mat srcImg, PreprocessParameters pp) {
         Mat img = srcImg.clone();
@@ -156,7 +152,9 @@ public class ProcessingImage {
         Imgproc.Canny(img, img, pp.C_t1, pp.C_t2, 3);
         // Возвращает структурирующий элемент заданного размера и формы для морфологических операций
         Mat kernel = Imgproc.getStructuringElement(MORPH_RECT, new Size(pp.k_size, pp.k_size));
+        // Расширяет светлые области и сужает темные
         Imgproc.dilate(img, img, kernel, new Point(-1, -1), pp.d_i);
+        // Расширяет темные области и сужает светлые
         Imgproc.erode(img, img, kernel, new Point(-1, -1), pp.e_i);
 
         return img;
@@ -165,41 +163,21 @@ public class ProcessingImage {
     // Определяет точки углов листа
     @SuppressWarnings("SameParameterValue")
     private ArrayList<Point> getCorners(Mat imgThree, Mat imgOr, int scale) {
-
         double maxArea = 0;
         Mat image = imgThree.clone();
         ArrayList<Point> corners = new ArrayList<>();
         MatOfPoint2f largestCurve = new MatOfPoint2f();
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         double minArcLength = imgThree.height() + imgThree.width();
-
-        // Находит контуры в двоичном изображении
         Imgproc.findContours(image, contours, new Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-
-        if (contours.size() < 1) {
-            corners.add(new Point(0, 0));
-            return corners;
-        }
-
-        for (MatOfPoint contour : contours) {
-            //Площадь контура
-            double area = Imgproc.contourArea(contour);
-
-            // Выбирает наибольний контур
-            if (area > maxArea) {
-                MatOfPoint2f thisContour = new MatOfPoint2f(contour.toArray());
-
-                // Вычисляет длину кривой или периметр замкнутого контура
+        if (contours.size() < 1) { corners.add(new Point(0, 0)); return corners; }
+        for (MatOfPoint contour : contours) { double area = Imgproc.contourArea(contour);
+            if (area > maxArea) { MatOfPoint2f thisContour = new MatOfPoint2f(contour.toArray());
                 double peri = Imgproc.arcLength(thisContour, true);
-                if (peri >= minArcLength) {
-                    // Аппроксимирует полигональную кривую с заданной точностью
-                    MatOfPoint2f approxCurve = new MatOfPoint2f();
-                    //      параметр "epsilon" представляет максимальное расстояние между приближением
-                    //      контура формы входного многоугольника и исходным входным многоугольником
+                if (peri >= minArcLength) { MatOfPoint2f approxCurve = new MatOfPoint2f();
                     Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
                     boolean isConvex = isContourConvex(new MatOfPoint(approxCurve.toArray()));
-                    if (approxCurve.total() == 4 && isConvex) {
-                        maxArea = area;
+                    if (approxCurve.total() == 4 && isConvex) { maxArea = area;
                         largestCurve = approxCurve;
                         Imgproc.drawContours(imgOr, Collections.singletonList(contour),
                                 -1, new Scalar(255, 0, 255), scale);
@@ -207,16 +185,11 @@ public class ProcessingImage {
                 }
             }
         }
-
-        if (largestCurve.toArray().length < 1) {
-            corners.add(new Point(0, 0));
-            return corners;
-        }
+        if (largestCurve.toArray().length < 1) {corners.add(new Point(0, 0)); return corners;}
         corners.add(largestCurve.toArray()[0]);
         corners.add(largestCurve.toArray()[1]);
         corners.add(largestCurve.toArray()[2]);
         corners.add(largestCurve.toArray()[3]);
-
         return corners;
     }
 
@@ -272,39 +245,31 @@ public class ProcessingImage {
         return minIndex;
     }
 
-
     // Определяет ориентацию изображения
     private SheetFormat setOrientation(ArrayList<Point> corners) {
         double width = (corners.get(1).x - corners.get(0).x + corners.get(3).x - corners.get(2).x) / 2;
         double height = (corners.get(2).y - corners.get(0).y + corners.get(3).y - corners.get(1).y) / 2;
         double aspRatio = width / height;
         if (aspRatio >= 1.0)
-            return A4_H;
+            return new SheetFormat(297, 210);
         else
-            return A4_V;
+            return new SheetFormat(210, 297);
     }
 
     // Трансфомирует изображение в ортогональное
     private Mat getWarp(Mat img, ArrayList<Point> src, SheetFormat A) {
         int width = A.w * FACTOR_VALUE;
         int height = A.h * FACTOR_VALUE;
-
         Mat outputMat = new Mat(width, height, CvType.CV_8UC4);
         ArrayList<Point> dst = new ArrayList<>();
-
         dst.add(new Point(0, 0));
         dst.add(new Point(width, 0));
         dst.add(new Point(0, height));
         dst.add(new Point(width, height));
-
         Mat matSrc = Converters.vector_Point2f_to_Mat(src);
         Mat matDst = Converters.vector_Point2f_to_Mat(dst);
-
-        // Вычисляет преобразование перспективы из четырех пар соответствующих точек
         Mat matrix = getPerspectiveTransform(matSrc, matDst);
-        // Применяет преобразование перспективы к изображению
         warpPerspective(img, outputMat, matrix, new Size(width, height));
-
         return outputMat;
     }
 
@@ -334,13 +299,8 @@ public class ProcessingImage {
     private Point getMiddlePoint(MatOfPoint contour) {
         Point[] points = contour.toArray();
         double sumX = 0, sumY = 0;
-        for (Point p : points) {
-            sumX += p.x;
-        }
-        for (Point p : points) {
-            sumY += p.y;
-        }
-
+        for (Point p : points) { sumX += p.x; }
+        for (Point p : points) { sumY += p.y; }
         double mX = sumX / points.length;
         double mY = sumY / points.length;
         return new Point(mX, mY);
@@ -356,53 +316,32 @@ public class ProcessingImage {
 
     // Определяет контура, где находятся точки-отметки
     private ArrayList<MatOfPoint> findContoursOfMarks(Mat imgThree, int sideSheet) {
-
         Mat image = imgThree.clone();
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         ArrayList<MatOfPoint> resultContours = new ArrayList<>();
-
-        // Находит контуры в двоичном изображении
         Imgproc.findContours(image, contours, new Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-
         for (MatOfPoint contour : contours) {
             MatOfPoint2f thisContour = new MatOfPoint2f(contour.toArray());
-
-            // Вычисляет длину кривой или периметр замкнутого контура
             double peri = Imgproc.arcLength(thisContour, true);
-
-            // Аппроксимирует полигональную кривую с заданной точностью
             MatOfPoint2f approxCurve = new MatOfPoint2f();
-            //Параметр "epsilon" представляет максимальное расстояние между приближением
-            //      контура формы входного многоугольника и исходным входным многоугольником
             Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
-
             MatOfPoint c = new MatOfPoint(approxCurve.toArray());
             switch (sideSheet) {
                 case Constants.LEFT_SIDE_SHEET:
                     if (getMiddlePoint(approxCurve).x < SIZE_BORDER) {
-                        resultContours.add(c);
-                    }
-                    break;
+                        resultContours.add(c); } break;
                 case Constants.TOP_SIDE_SHEET:
                     if (getMiddlePoint(approxCurve).y < SIZE_BORDER) {
-                        resultContours.add(c);
-                    }
-                    break;
+                        resultContours.add(c); } break;
                 case Constants.RIGHT_SIDE_SHEET:
                     if (getMiddlePoint(approxCurve).x > image.width() - SIZE_BORDER) {
-                        resultContours.add(c);
-                    }
-                    break;
+                        resultContours.add(c); } break;
                 case Constants.BOTTOM_SIDE_SHEET:
                     if (getMiddlePoint(approxCurve).y > image.height() - SIZE_BORDER) {
-                        resultContours.add(c);
-                    }
-                    break;
+                        resultContours.add(c); } break;
             }
         }
-        if (resultContours.isEmpty()) {
-            resultContours.add(new MatOfPoint(new Point(0, 0)));
-        }
+        if (resultContours.isEmpty()) { resultContours.add(new MatOfPoint(new Point(0, 0)));}
         return resultContours;
     }
 
@@ -515,13 +454,147 @@ public class ProcessingImage {
         if (sideSheet == Constants.LEFT_SIDE_SHEET || sideSheet == Constants.RIGHT_SIDE_SHEET) {
             length = Math.abs(points.get(0).y - points.get(1).y);
             realLengthSheet = A4.h;
-            actualLengthSheet = img.height() + CROP_VALUE * 2;
+            actualLengthSheet = img.height() + CROP_VALUE * 1.8;
         } else {
             length = Math.abs(points.get(0).x - points.get(1).x);
             realLengthSheet = A4.w;
-            actualLengthSheet = img.width() + CROP_VALUE * 1.5;
+            actualLengthSheet = img.width() + CROP_VALUE * 1.8;
         }
         return (realLengthSheet * length * mapScale) / (actualLengthSheet * 1000);
     }
 
+    /*
+    // Определяет контура, где находятся точки-отметки
+    private ArrayList<MatOfPoint> findContoursOfMarks(Mat imgThree, int sideSheet) {
+
+        Mat image = imgThree.clone();
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
+        ArrayList<MatOfPoint> resultContours = new ArrayList<>();
+
+        // Находит контуры в двоичном изображении
+        Imgproc.findContours(image, contours, new Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for (MatOfPoint contour : contours) {
+            MatOfPoint2f thisContour = new MatOfPoint2f(contour.toArray());
+
+            // Вычисляет длину кривой или периметр замкнутого контура
+            double peri = Imgproc.arcLength(thisContour, true);
+
+            // Аппроксимирует полигональную кривую с заданной точностью
+            MatOfPoint2f approxCurve = new MatOfPoint2f();
+            //Параметр "epsilon" представляет максимальное расстояние между приближением
+            //      контура формы входного многоугольника и исходным входным многоугольником
+            Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
+
+            MatOfPoint c = new MatOfPoint(approxCurve.toArray());
+            switch (sideSheet) {
+                case Constants.LEFT_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).x < SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.TOP_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).y < SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.RIGHT_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).x > image.width() - SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+                case Constants.BOTTOM_SIDE_SHEET:
+                    if (getMiddlePoint(approxCurve).y > image.height() - SIZE_BORDER) {
+                        resultContours.add(c);
+                    }
+                    break;
+            }
+        }
+        if (resultContours.isEmpty()) {
+            resultContours.add(new MatOfPoint(new Point(0, 0)));
+        }
+        return resultContours;
+    }
+
+    // Определяет точки углов листа
+    @SuppressWarnings("SameParameterValue")
+    private ArrayList<Point> getCorners(Mat imgThree, Mat imgOr, int scale) {
+
+        double maxArea = 0;
+        Mat image = imgThree.clone();
+        ArrayList<Point> corners = new ArrayList<>();
+        MatOfPoint2f largestCurve = new MatOfPoint2f();
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
+        double minArcLength = imgThree.height() + imgThree.width();
+
+        // Находит контуры в двоичном изображении
+        Imgproc.findContours(image, contours, new Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        if (contours.size() < 1) {
+            corners.add(new Point(0, 0));
+            return corners;
+        }
+
+        for (MatOfPoint contour : contours) {
+            //Площадь контура
+            double area = Imgproc.contourArea(contour);
+
+            // Выбирает наибольний контур
+            if (area > maxArea) {
+                MatOfPoint2f thisContour = new MatOfPoint2f(contour.toArray());
+
+                // Вычисляет длину кривой или периметр замкнутого контура
+                double peri = Imgproc.arcLength(thisContour, true);
+                if (peri >= minArcLength) {
+                    // Аппроксимирует полигональную кривую с заданной точностью
+                    MatOfPoint2f approxCurve = new MatOfPoint2f();
+                    //      Параметр "epsilon" представляет максимальное расстояние между приближением
+                    //      контура формы входного многоугольника и исходным входным многоугольником
+                    Imgproc.approxPolyDP(thisContour, approxCurve, 0.05 * peri, true);
+                    boolean isConvex = isContourConvex(new MatOfPoint(approxCurve.toArray()));
+                    if (approxCurve.total() == 4 && isConvex) {
+                        maxArea = area;
+                        largestCurve = approxCurve;
+                        Imgproc.drawContours(imgOr, Collections.singletonList(contour),
+                                -1, new Scalar(255, 0, 255), scale);
+                    }
+                }
+            }
+        }
+
+        if (largestCurve.toArray().length < 1) {
+            corners.add(new Point(0, 0));
+            return corners;
+        }
+        corners.add(largestCurve.toArray()[0]);
+        corners.add(largestCurve.toArray()[1]);
+        corners.add(largestCurve.toArray()[2]);
+        corners.add(largestCurve.toArray()[3]);
+
+        return corners;
+    }
+// Трансфомирует изображение в ортогональное
+private Mat getWarp(Mat img, ArrayList<Point> src, SheetFormat A) {
+    int width = A.w * FACTOR_VALUE;
+    int height = A.h * FACTOR_VALUE;
+
+    Mat outputMat = new Mat(width, height, CvType.CV_8UC4);
+    ArrayList<Point> dst = new ArrayList<>();
+
+    dst.add(new Point(0, 0));
+    dst.add(new Point(width, 0));
+    dst.add(new Point(0, height));
+    dst.add(new Point(width, height));
+
+    Mat matSrc = Converters.vector_Point2f_to_Mat(src);
+    Mat matDst = Converters.vector_Point2f_to_Mat(dst);
+
+    // Вычисляет преобразование перспективы из четырех пар соответствующих точек
+    Mat matrix = getPerspectiveTransform(matSrc, matDst);
+    // Применяет преобразование перспективы к изображению
+    warpPerspective(img, outputMat, matrix, new Size(width, height));
+
+    return outputMat;
+}
+*/
 }

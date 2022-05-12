@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.distinscale.domain.utilities.Constants;
 import com.example.distinscale.domain.utilities.ImageAdapter;
-import com.example.distinscale.domain.models.Steps;
 import com.example.distinscale.databinding.ActivityWorkBinding;
 import com.example.distinscale.domain.logic.ProcessingImage;
 
@@ -32,7 +32,6 @@ public class WorkActivity extends AppCompatActivity {
     private int sideSheet;
     private ProgressDialog progressDialog;
 
-    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,113 +39,34 @@ public class WorkActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         isVisibleRecyclerView = 4;
 
-        checkLoadOpenCV();
+        checkLoadOpenCv();
         getData();
         setListener();
         createProgressDialog();
-
-        Handler handler = new Handler();
-        new Thread(() -> {
-
-            ProcessingImage proc = new ProcessingImage(mapScale, sideSheet);
-            final int[] pr = {1};
-
-            proc.setImageStep(currentPhotoPath);
-            runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_01 + "\n" + Steps.STEP_02));
-
-            proc.pyrMeanShiftFilteringFirstStep();
-            runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_01 + "\n" + Steps.STEP_02 + "\n" + Steps.STEP_03));
-
-            int threshold2 = 256;
-            do {
-                proc.preProcessingFirstStep(threshold2);
-                proc.getCornersStep();
-                threshold2 /= 2;
-            } while (proc.corners.size() < 3 && threshold2 > 3);
-            runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                    Steps.STEP_02 + "\n" + Steps.STEP_03 + "\n" + Steps.STEP_04));
-
-            if (proc.corners.size() < 2) {
-                handler.post(() -> {
-                    progressDialog.dismiss();
-                    ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
-                    binding.recyclerView.setAdapter(imageAdapter);
-                    //todo: добавить инструкции по улучшению качества изображения для обработки
-                    showMessage("Контур листа бумаги не найден! Попробуйте сделать фото ещё раз");
-                });
-            } else {
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_03 + "\n" + Steps.STEP_04 + "\n" + Steps.STEP_05));
-
-                proc.drawPointsStep();
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_04 + "\n" + Steps.STEP_05 + "\n" + Steps.STEP_06));
-
-                proc.warmImageStep();
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_05 + "\n" + Steps.STEP_06 + "\n" + Steps.STEP_07));
-
-                proc.cropStep();
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_06 + "\n" + Steps.STEP_07 + "\n" + Steps.STEP_08));
-
-                proc.pyrMeanShiftFilteringSecondStep();
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_07 + "\n" + Steps.STEP_08 + "\n" + Steps.STEP_09));
-
-                proc.preProcessingSecondStep();
-                runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                        Steps.STEP_08 + "\n" + Steps.STEP_09 + "\n" + Steps.STEP_10));
-
-                proc.findContoursOfMarksStep();
-                if (proc.contoursOfMarks.size() < 2) {
-                    handler.post(() -> {
-                        progressDialog.dismiss();
-                        ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
-                        binding.recyclerView.setAdapter(imageAdapter);
-                        showMessage("Отметки на листе не найдены! Попробуйте сделать фото ещё раз");
-                    });
-                } else {
-
-                    proc.selectPointStep();
-                    runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                            Steps.STEP_09 + "\n" + Steps.STEP_10 + "\n" + Steps.STEP_11));
-
-                    proc.drawArrowStep();
-                    runOnUiThread(() -> setProgress(progressDialog, pr[0]++,
-                            Steps.STEP_10 + "\n" + Steps.STEP_11 + "\n" + Steps.STEP_12));
-
-                    proc.getLengthLineStep();
-                    runOnUiThread(() -> setProgress(progressDialog, pr[0],
-                            Steps.STEP_11 + "\n" + Steps.STEP_12 + "\n" + Steps.STEP_FINAL));
-
-                    handler.post(() -> {
-                        progressDialog.dismiss();
-                        binding.resultImg.setImageBitmap(
-                                convertMatToBitmap(proc.matArrayList.get(0)));
-                        binding.linearLayout.setVisibility(View.VISIBLE);
-                        binding.resultLength.setText(String.format("%.3f", proc.length) + "m");
-                        binding.textScale.setText("1 : " + mapScale);
-                        ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
-                        binding.recyclerView.setAdapter(imageAdapter);
-                    });
-                }
-            }
-        }).start();
-
+        startProcessing();
     }
 
-    // Создаёт ProgressDialog
-    private void createProgressDialog(){
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMax(12);              // Количество шагов
-        progressDialog.setProgress(0);
-        progressDialog.setMessage(Steps.STEP_01);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+    // Проверяет, загрузилась ли библиотека OpenCV
+    private void checkLoadOpenCv() {
+        if (!OpenCVLoader.initDebug()) {
+            showMessage("Unable to load OpenCV!");
+            onBackPressed();
+        } else {
+            showMessage("OpenCV loaded Successfully!");
+        }
+    }
+
+    // Показывает сообщение в всплывающем уведомлении
+    private void showMessage(String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+    }
+
+    // Загружает данные из SourceDataActivity
+    private void getData() {
+        Bundle arguments = getIntent().getExtras();
+        currentPhotoPath = arguments.getString("CURRENT_PHOTO_PATH");
+        mapScale = arguments.getInt("SCALE");
+        sideSheet = arguments.getInt("SIDE");
     }
 
     // ОБрабатывает нажатия на кнопки
@@ -168,27 +88,15 @@ public class WorkActivity extends AppCompatActivity {
         });
     }
 
-    // Показывает сообщение в всплывающем уведомлении
-    private void showMessage(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
-    }
-
-    // Проверяет, загрузилась ли библиотека OpenCV
-    private void checkLoadOpenCV() {
-        if (!OpenCVLoader.initDebug()) {
-            showMessage("Unable to load OpenCV!");
-            onBackPressed();
-        } else {
-            showMessage("OpenCV loaded Successfully!");
-        }
-    }
-
-    // Загружает данные из SourceDataActivity
-    private void getData() {
-        Bundle arguments = getIntent().getExtras();
-        currentPhotoPath = arguments.getString("CURRENT_PHOTO_PATH");
-        mapScale = arguments.getInt("SCALE");
-        sideSheet = arguments.getInt("SIDE");
+    // Создаёт ProgressDialog
+    private void createProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMax(12);              // Количество шагов
+        progressDialog.setProgress(0);
+        progressDialog.setMessage(Constants.listOfSteps.get(0));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     // Конвертирует Mat в Bitmap
@@ -204,10 +112,93 @@ public class WorkActivity extends AppCompatActivity {
         return bmp;
     }
 
-    // Устанавливает погресс загрузки в ProgressDialog
-    private void setProgress(ProgressDialog pd, int i, String msg) {
+    // Устанавливает прогресс загрузки в ProgressDialog
+    private void setProgress(ProgressDialog pd, int i) {
+        pd.setMessage(Constants.listOfSteps.get(i - 1) + "\n" + Constants.listOfSteps.get(i));
         pd.setProgress(i);
-        pd.setMessage(msg);
     }
 
+    // Запускает обработку
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+    private void startProcessing() {
+        Handler handler = new Handler();
+        new Thread(() -> {
+
+            ProcessingImage proc = new ProcessingImage(mapScale, sideSheet);
+
+            final int[] pr = {1};
+
+            proc.setImageStep(currentPhotoPath);
+            runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+            proc.pyrMeanShiftFilteringFirstStep();
+            runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+            int threshold2 = 256;
+            do {
+                proc.preProcessingFirstStep(threshold2);
+                proc.getCornersStep();
+                threshold2 /= 2;
+            } while (proc.corners.size() < 3 && threshold2 > 3);
+            runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+            if (proc.corners.size() < 2) {
+                handler.post(() -> {
+                    progressDialog.dismiss();
+                    ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
+                    binding.recyclerView.setAdapter(imageAdapter);
+                    //todo: добавить инструкции по улучшению качества изображения для обработки
+                    showMessage("Контур листа бумаги не найден! Попробуйте сделать фото ещё раз");
+                });
+            } else {
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.reorderStep();
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.warpImageStep();
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.cropStep();
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.pyrMeanShiftFilteringSecondStep();
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.preProcessingSecondStep();
+                runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                proc.findContoursOfMarksStep();
+                if (proc.contoursOfMarks.size() < 2) {
+                    handler.post(() -> {
+                        progressDialog.dismiss();
+                        ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
+                        binding.recyclerView.setAdapter(imageAdapter);
+                        showMessage("Отметки на листе не найдены! Попробуйте сделать фото ещё раз");
+                    });
+                } else {
+
+                    proc.selectPointStep();
+                    runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                    proc.drawArrowStep();
+                    runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                    proc.getLengthLineStep();
+                    runOnUiThread(() -> setProgress(progressDialog, pr[0]++));
+
+                    handler.post(() -> {
+                        progressDialog.dismiss();
+                        binding.resultImg.setImageBitmap(
+                                convertMatToBitmap(proc.matArrayList.get(0)));
+                        binding.linearLayout.setVisibility(View.VISIBLE);
+                        binding.resultLength.setText(String.format("%.3f", proc.length) + "m");
+                        binding.textScale.setText("1 : " + mapScale);
+                        ImageAdapter imageAdapter = new ImageAdapter(this, proc.matArrayList);
+                        binding.recyclerView.setAdapter(imageAdapter);
+                    });
+                }
+            }
+        }).start();
+    }
 }
