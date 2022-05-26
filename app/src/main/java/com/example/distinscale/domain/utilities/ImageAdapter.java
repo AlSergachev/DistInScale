@@ -29,21 +29,25 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         this.matList = matList;
         this.inflater = LayoutInflater.from(context);
     }
+
     @NonNull @Override
     public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = inflater.inflate(R.layout.list_item, parent, false);
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(ImageAdapter.ViewHolder holder, int position) {
         Mat mat = matList.get(position);
         holder.resultImg.setImageBitmap(convertMatToBitmap(mat));
     }
+
     @Override
     public int getItemCount() {
         return matList.size();
     }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView resultImg;
 
@@ -52,6 +56,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             resultImg = view.findViewById(R.id.resultImg);
         }
     }
+
     // Конвертирует Mat в Bitmap
     private static Bitmap convertMatToBitmap(Mat inputM) {
         Bitmap bmp = null;
