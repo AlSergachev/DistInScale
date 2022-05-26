@@ -1,5 +1,5 @@
 # :straight_ruler: DistInScale
-[Ссылка на DistInScale.apk](https://github.com/AlSergachev/DistInScale/releases/tag/v.1.0.1)
+[Ссылка на DistInScale.apk](https://github.com/AlSergachev/DistInScale/releases/tag/v.1.0.2)
 
 
 ## Тема: "Мобильное приложение на языке Java для определения расстояний на основе алгоритмов компьютерного зрения"
